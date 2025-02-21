@@ -3,27 +3,22 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import http from "http";
-import { Server } from "socket.io";
-import connectDB from "./db/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import authMiddleware from "./middleware/authMiddleware.js";
+import setupSocketServer from "./ws/socket.js";
 
-//setting-up environment variables
+// setting up environment variables
 dotenv.config();
 
-//express-app initialization
+// express-app initialization
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
+setupSocketServer(server);
 
 // middleware
 app.use(cors());
@@ -32,27 +27,19 @@ app.use(authMiddleware);
 
 // db connection
 mongoose.connect(process.env.MONGO_URI)
-.then(console.log(`DB connected`))
-.catch(err => console.error(`DB connection error: ${err.message}`));
+  .then(() => console.log("DB connected"))
+  .catch(err => console.error(`DB connection error: ${err.message}`));
 
-// API Routes
+// api routes
 app.use("/auth", authRoutes);
 app.use("/chats", chatRoutes);
 app.use("/messages", messageRoutes);
 app.use("/users", userRoutes);
+app.use("/admin", adminRoutes);
 
-// error-handling Middleware
+// error-handling middleware
 app.use(notFound);
 app.use(errorHandler);
-
-// websocket connection
-io.on("connection", (socket) => {
-  console.log("New client connected: ", socket.id);
-
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-  });
-});
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

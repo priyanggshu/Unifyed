@@ -1,4 +1,3 @@
-
 import express from "express";
 import { getUserProfile, getAllUsers } from "../controllers/userController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
