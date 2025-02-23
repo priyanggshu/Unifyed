@@ -15,7 +15,7 @@ const ChatPage = () => {
         <Sidebar />
       </div>
       
-      <div className="w-[75%] overflow-hidden">
+      <div className="w-[50%] h-auto rounded-2xl border border-gray-300 overflow-hidden">
         {isVideoCallActive ? (
           <VideoCall currentUser={currentUser} onEndCall={() => setIsVideoCallActive(false)} />
         ) : selectedChat ? (

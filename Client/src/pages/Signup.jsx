@@ -17,7 +17,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       await signupUser({ username, email, password, gender });
-      navigate("/login");
+      navigate("/");
     } catch (error) {
       console.error("Signup failed", error.response?.data?.message);
     }
@@ -83,13 +83,13 @@ const Signup = () => {
               Already have an account?{" "}
               <span
                 className="text-green-600 hover:underline font-bold cursor-pointer"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate("/")}
               >
                 Login
               </span>
             </p>
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/")}
               className="mt-3 text-blue-900 bg-blue-300 hover:bg-blue-400 p-3 text-sm font-semibold rounded-3xl hover:underline text-center w-full"
             >
               Test Login

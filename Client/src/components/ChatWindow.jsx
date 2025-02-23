@@ -37,9 +37,9 @@ const ChatWindow = ({ startVideoCall }) => {
     selectedChat.participants?.find((p) => p._id !== user._id) || null;
 
   return (
-    <div className="flex flex-col h-screen bg-transparent shadow-lg">
-      {/* ✅ Chat Header */}
-      <div className="px-4 py-4 bg-[#EFEEF4] shadow-sm flex justify-between items-center rounded-t-2xl text-gray-900">
+    <div className="flex flex-col h-screen bg-transparent py-4 shadow-lg">
+      {/* Chat Header */}
+      <div className="px-4 py-3 bg-amber-950 shadow-sm flex justify-between items-center rounded-t-2xl text-gray-900">
         {/* Left Side - User Info */}
         <div className="flex items-center">
           <img

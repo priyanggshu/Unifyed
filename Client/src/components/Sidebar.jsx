@@ -16,7 +16,7 @@ const Sidebar = ({ }) => {
   useEffect(() => {
     const fetchUsers = async () => {
       if (!user || !user?.token) {
-        navigate("/login");
+        navigate("/");
         return;
       }
 
@@ -39,7 +39,7 @@ const Sidebar = ({ }) => {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    navigate("/login");
+    navigate("/");
   };
 
   return (

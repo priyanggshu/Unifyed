@@ -13,7 +13,7 @@ const App = () => {
       <ChatProvider>
         <Router>
           <Routes>
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin" element={<AdminDashboard />} />
