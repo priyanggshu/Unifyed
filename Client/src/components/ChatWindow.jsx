@@ -39,15 +39,15 @@ const ChatWindow = ({ startVideoCall }) => {
   return (
     <div className="flex flex-col h-screen bg-transparent py-4 shadow-lg">
       {/* Chat Header */}
-      <div className="px-4 py-3 bg-amber-950 shadow-sm flex justify-between items-center rounded-t-2xl text-gray-900">
+      <div className="px-4 py-3 bg-[#EFEEF4] shadow-2xl flex justify-between items-center rounded-t-2xl text-gray-900 h-20">
         {/* Left Side - User Info */}
-        <div className="flex items-center">
+        <div className="flex items-center gap-3 h-full">
           <img
             src={otherParticipant?.avatar || "https://via.placeholder.com/40"}
             alt="User Avatar"
-            className="w-14 h-14 rounded-full mr-3 border border-yellow-200"
+            className="w-14 h-14 rounded-full border border-yellow-200"
           />
-          <div>
+          <div className="flex flex-col justify-center">
             <h2 className="text-lg font-semibold">
               {otherParticipant?.username || "Unknown User"}
             </h2>
@@ -58,17 +58,17 @@ const ChatWindow = ({ startVideoCall }) => {
         </div>
 
         {/* Right Side - Call Buttons */}
-        <div className="flex space-x-3">
-          <button onClick={startVideoCall} className="p-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition">
-            📹 Video Call
+        <div className="flex space-x-3 gap-2">
+          <button onClick={startVideoCall} className="p-2 transition">
+            <FaVideo className="scale-125 hover:scale-150"/>
           </button>
-          <button className="p-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600 transition">
-            📞 Voice Call
+          <button className="p-2 transition">
+            <IoMdCall className="scale-125 hover:scale-150" />
           </button>
         </div>
       </div>
 
-      {/* ✅ Messages Area */}
+      {/* Messages Area */}
       <div className="flex-grow p-4 bg-[#EDF1F4] overflow-y-auto">
         {messages.map((msg) => (
           <div
@@ -93,7 +93,7 @@ const ChatWindow = ({ startVideoCall }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* ✅ Message Input */}
+      {/* Message Input */}
       <div className="p-4 bg-white border-t flex items-center">
         <div className="flex w-full bg-gray-100 rounded-full px-4 py-2 items-center">
           <input

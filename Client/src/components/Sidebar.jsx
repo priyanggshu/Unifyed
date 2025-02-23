@@ -45,7 +45,7 @@ const Sidebar = ({ }) => {
   return (
     <div className=" h-screen bg-white shadow-lg flex flex-col">
       {/* Header */}
-      <div className="p-4 shadow-sm pl-10 text-2xl font-bold text-gray-900">Chat</div>
+      <div className="p-4 pl-10 text-2xl shadow-sm font-bold text-gray-900">Chat</div>
       
       {/* User Info */}
       <div className="p-4 flex flex-col items-center text-center">
@@ -62,16 +62,16 @@ const Sidebar = ({ }) => {
           placeholder="Search..."
           className="w-full bg-[#F0F5F6] placeholder:text-sm p-2 border border-gray-300 rounded-2xl focus:ring-1 focus:ring-blue-200 outline-none"
         />
-        <CiSearch className="absolute text-gray-600 scale-125 left-78 top-85 " />
+        <CiSearch className="absolute text-gray-600 scale-125 left-75 top-81 " />
       </div>
       
       {/* Users List */}
-      <div className="flex-grow border mx-1 bg-white border-gray-300 rounded-xl overflow-y-auto p-4">
-        <p className="text-sm font-semibold pb-2 text-gray-500">Latest Chats</p>
+      <div className="flex-grow pr-3 mx-1 rounded-xl overflow-y-auto p-2">
+        <p className="text-sm font-semibold pl-1 pb-3  text-gray-500">Latest Chats</p>
         {users.map((otherUser) => (
           <div
             key={otherUser._id}
-            className="flex items-center py-3 border border-gray-200 hover:bg-gray-200 rounded-2xl cursor-pointer"
+            className="flex items-center py-3 border border-green-100 hover:bg-gray-200 rounded-xl cursor-pointer"
             onClick={() => selectChat(otherUser)}
           >
             <img src={otherUser.avatar || "https://via.placeholder.com/40"} alt="User Avatar" className="w-13 h-13 m-1 rounded-full mr-3 border border-yellow-200" />
