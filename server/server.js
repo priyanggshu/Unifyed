@@ -23,7 +23,6 @@ setupSocketServer(server);
 // middleware
 app.use(cors());
 app.use(express.json());
-app.use(authMiddleware);
 
 // db connection
 mongoose.connect(process.env.MONGO_URI)

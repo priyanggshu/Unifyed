@@ -17,6 +17,12 @@ const userSchema = new mongoose.Schema(
         required: true,
         minlength: 6
     },
+    avatar: {
+      type: String,
+      default: function () {
+        return `https://avatar.iran.liara.run/public/boy?username=${this.username}`;
+      },
+    },
     role: { 
         type: String, 
         enum: ["user", "admin"], 

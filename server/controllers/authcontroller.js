@@ -6,16 +6,21 @@ import { generateToken } from "../config/jwt.js";
 const signupSchema = z.object({
   username: z.string().min(3).max(20),
   email: z.string().email(),
-  password: z.string().min(6)
+  password: z.string().min(6),
+  role: z.enum(["user", "admin"]).optional(),
+  gender: z.enum(["male", "female"]).optional(),
 });
+
 const loginSchema = z.object({
   username: z.string().min(3).max(20),
   password: z.string().min(6)
 });
 
-export const registerUser = async (req, res) => {
+const avatarBaseUrl = "https://avatar.iran.liara.run/public";
+
+export const signupController = async (req, res) => {
   try {
-    const { username, email, password } = signupSchema.parse(req.body);
+    const { username, email, password, gender = "male", role = "user"} = signupSchema.parse(req.body);
 
     const userExists = await User.findOne({ username });
     if (userExists) {
@@ -24,13 +29,22 @@ export const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = await User.create({ username, email, password: hashedPassword });
+    const avatarUrl = `${avatarBaseUrl}/${gender === "male" ? "boy" : "girl"}?username=${username}`;
+
+    const user = await User.create({ 
+      username, 
+      email, 
+      password: hashedPassword, 
+      avatar: avatarUrl,
+      role
+    });
 
     if (user) {
       res.status(201).json({
         _id: user.id,
         username: user.username,
         email: user.email,
+        avatar: user.avatar,
         token: generateToken(user._id),
       });
     } else {
@@ -41,7 +55,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-export const loginUser = async (req, res) => {
+export const loginController = async (req, res) => {
   try {
     const { username, password } = loginSchema.parse(req.body);
 
