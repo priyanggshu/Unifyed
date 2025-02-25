@@ -39,7 +39,7 @@ const ChatWindow = ({ startVideoCall }) => {
   return (
     <div className="flex flex-col h-screen bg-transparent py-4 shadow-lg">
       {/* Chat Header */}
-      <div className="px-4 py-3 bg-[#EFEEF4] shadow-2xl flex justify-between items-center rounded-t-2xl text-gray-900 h-20">
+      <div className="px-4 pt-3 bg-[#EFEEF4] shadow-2xl flex justify-between items-center rounded-t-2xl text-gray-900 h-20">
         {/* Left Side - User Info */}
         <div className="flex items-center gap-3 h-full">
           <img
@@ -69,14 +69,14 @@ const ChatWindow = ({ startVideoCall }) => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-grow p-4 bg-[#EDF1F4] overflow-y-auto">
+      <div className="flex-grow p-4 bg-neutral-100 overflow-y-auto">
         {messages.map((msg) => (
           <div
             key={msg._id}
             className={`flex ${msg.sender === user._id ? "justify-end" : "justify-start"} mb-3`}
           >
             <div
-              className={`max-w-xs p-3 rounded-lg shadow ${
+              className={`max-w-xs p-3 rounded-lg shadow-md ${
                 msg.sender === user._id ? "bg-blue-500 text-white" : "bg-white text-gray-700"
               }`}
             >
@@ -94,7 +94,7 @@ const ChatWindow = ({ startVideoCall }) => {
       </div>
 
       {/* Message Input */}
-      <div className="p-4 bg-white border-t flex items-center">
+      <div className="p-4 bg-white flex items-center">
         <div className="flex w-full bg-gray-100 rounded-full px-4 py-2 items-center">
           <input
             type="text"

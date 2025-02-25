@@ -62,7 +62,7 @@ const Sidebar = ({ }) => {
           placeholder="Search..."
           className="w-full bg-[#F0F5F6] placeholder:text-sm p-2 border border-gray-300 rounded-2xl focus:ring-1 focus:ring-blue-200 outline-none"
         />
-        <CiSearch className="absolute text-gray-600 scale-125 left-75 top-81 " />
+        <CiSearch className="absolute text-gray-600 scale-110 left-78 top-85 " />
       </div>
       
       {/* Users List */}

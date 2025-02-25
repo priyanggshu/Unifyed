@@ -1,9 +1,8 @@
 import { useContext, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
-import VideoCall from "../components/VideoCall";
-import { ChatContext } from "../context/Chat_Context";
 import Callbar from "../components/Callbar";
+import { ChatContext } from "../context/Chat_Context";
 
 const ChatPage = () => {
   const { selectedChat } = useContext(ChatContext);
