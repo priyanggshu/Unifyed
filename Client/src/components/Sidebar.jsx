@@ -21,14 +21,11 @@ const Sidebar = ({ }) => {
       }
 
       try {
-        console.log("🔄 Fetching users with token:", user.token);
         const data = await getAllUsers(user.token);
 
         if (!Array.isArray(data)) {
           throw new Error("Invalid data format: Expected an array.");
         }
-
-        console.log("✅ Users fetched from API:", data);
         setUsers(data);
       } catch (error) {
         console.error("Error fetching users", error.response?.data);

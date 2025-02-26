@@ -20,9 +20,7 @@ export const getUserProfile = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    console.log("Authenticated user:", req.user); // Debugging log
     const users = await User.find().select("-password");
-    console.log("Users fetched successfully. Count:", users.length);
     res.status(200).json(users);
   } catch (error) {
     console.error("❌ Error in getAllUsers:", error);

@@ -4,16 +4,12 @@ import Chat from "../db/Chat.js";
 
 export const getMessagesForChat = async (req, res) => {
   try {
-    console.log("reached getMessagesForChat");
-    console.log("🔍 Received chatId:", req.params.chatId);
-
     if (!mongoose.Types.ObjectId.isValid(req.params.chatId)) {
       return res.status(400).json({ message: "Invalid chat ID" });
     }
 
     const chat = await Chat.findById(req.params.chatId);
-    console.log(`chat found: ${chat}`);
-
+    
     if (!chat) {
       return res.status(404).json({ message: "Chat not found" });
     }
@@ -22,12 +18,10 @@ export const getMessagesForChat = async (req, res) => {
       return res.status(403).json({ message: "Access denied" });
     }
 
-    console.log("fetching messages");
     const messages = await Message.find({ chatId: req.params.chatId })
       .populate("sender", "username email")
       .sort({ createdAt: 1 });
       
-      console.log("successfully got done with this function", messages);
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch messages", error: error.message });

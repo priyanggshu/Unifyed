@@ -1,66 +1,99 @@
-import { Server } from "socket.io";
+import { Server } from "socket.io"
 
-const activeUsers = new Map(); // connected users tracking
+const activeUsers = new Map() // Store users as { userId: { socketId, peerId } }
 
 const setupSocketServer = (server) => {
   const io = new Server(server, {
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST"],
-    },
-  });
+    cors: { origin: "*", methods: ["GET", "POST"] },
+  })
 
   io.on("connection", (socket) => {
-    console.log("New client connected:", socket.id);
+    console.log(`🟢 New client connected: ${socket.id}`)
 
-    socket.on("registerUser", (userId) => {   // store active users with socket ID
-      if(userId) {
-        activeUsers.set(userId, socket.id);
-        socket.join(userId);
-        console.log(`User ${userId} registered with socket Id ${socket.id}`);
+    // Register user with both Socket.io and PeerJS ID
+    socket.on("registerUser", ({ userId, peerId }) => {
+      if (userId && peerId) {
+        activeUsers.set(userId, { socketId: socket.id, peerId })
+        socket.join(userId)
+        console.log(`✅ User ${userId} registered: SocketID: ${socket.id}, PeerID: ${peerId}`)
+
+        // Broadcast user status to all connected clients
+        io.emit("userStatus", { userId, online: true, peerId })
       }
     })
 
-    // message sending
-    socket.on("sendMessage", ({senderId, receiverId, message}) => {
-      if(!senderId || !receiverId || !message) return;
-      console.log(`Message from ${senderId} to ${receiverId}: ${message}`);
+    // Call User
+    socket.on("callUser", ({ userToCall, signalData, from, peerId }) => {
+      const receiver = activeUsers.get(userToCall)
+      console.log(`📞 Received callUser event. Caller: ${from}, Receiver: ${userToCall}`)
 
-      const receiverSocketId = activeUsers.get(receiverId);
-      if(receiverSocketId) {
-        io.to(receiverSocketId).emit("message", { senderId, message });
+      if (receiver) {
+        console.log(
+          `📤 Sending call request to ${userToCall} (Socket: ${receiver.socketId}, PeerID: ${receiver.peerId})`,
+        )
+        io.to(receiver.socketId).emit("incomingCall", {
+          signal: signalData,
+          from,
+          peerId: peerId || activeUsers.get(from)?.peerId,
+        })
+      } else {
+        console.log(`❌ Call failed: User ${userToCall} not found in active users.`)
+        // Notify caller that user is not available
+        socket.emit("callFailed", { reason: "user_unavailable", userToCall })
       }
-      });
+    })
 
-    // WebRTC Call Handling
-    socket.on("callUser", ({ userToCall, signalData, from }) => {
-      const userSocketId = activeUsers.get(userToCall);
+    // Answer Call
+    socket.on("answerCall", ({ to, signal, peerId }) => {
+      const caller = activeUsers.get(to)
+      console.log(`📞 answerCall event received. Call from ${to} answered by ${socket.id}`)
 
-      if(userSocketId) {
-        io.to(userSocketId).emit("incomingCall", { signal: signalData, from });
+      if (caller) {
+        console.log(`✅ Sending callAccepted event to ${to} (Socket: ${caller.socketId})`)
+        io.to(caller.socketId).emit("callAccepted", { signal, peerId })
+      } else {
+        console.log(`❌ Answer failed: User ${to} not found in active users.`)
       }
-    });
+    })
 
-    socket.on("answerCall", ({ to, signal}) => {
-      const userSocketId = activeUsers.get(to);
-      
-      if(userSocketId) {
-        io.to(userSocketId).emit("callAccepted", signal);
+    // End Call
+    socket.on("endCall", ({ to }) => {
+      const receiver = activeUsers.get(to)
+      if (receiver) {
+        io.to(receiver.socketId).emit("callEnded")
       }
-    });
+    })
 
+    // Handle Disconnection
     socket.on("disconnect", () => {
-      const userId = [...activeUsers.entries()].find(([, id]) => id === socket.id)?.[0];
+      const userEntry = [...activeUsers.entries()].find(([, data]) => data.socketId === socket.id)
+      if (userEntry) {
+        const userId = userEntry[0]
+        activeUsers.delete(userId)
+        console.log(`❌ User ${userId} disconnected.`)
 
-      if(userId) {
-        activeUsers.delete(userId);
-        console.log(`User ${userId} disconnected from active  users.`);
+        // Broadcast user status to all connected clients
+        io.emit("userStatus", { userId, online: false })
       }
-      console.log("Client disconnected:", socket.id);
-    });
-  });
+      console.log("🔴 Client disconnected:", socket.id)
+    })
 
-  return io;
-};
+    // Join Chat Room
+    socket.on("joinChat", (chatId) => {
+      socket.join(chatId)
+      console.log(`User joined chat room: ${chatId}`)
+    })
 
-export default setupSocketServer;
+    // Send Message
+    socket.on("sendMessage", (newMessage) => {
+      if (newMessage.chatId) {
+        socket.to(newMessage.chatId).emit("messageReceived", newMessage)
+      }
+    })
+  })
+
+  return io
+}
+
+export default setupSocketServer
+
