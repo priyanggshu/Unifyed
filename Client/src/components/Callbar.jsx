@@ -60,7 +60,19 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
       setIncomingCall(true);
       setIncomingCallerId(call.peer);
       window.incomingCall = call;
+
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((userStream) => {
+        setStream(userStream);
+        call.answer(userStream);
+
+        call.on("stream", (remoteStream) => {
+          setRemoteStream(remoteStream);
+          if (userVideo.current) {
+            userVideo.current.srcObject = remoteStream;
+          }
+        })
     });
+  });
 
     return () => newPeer.destroy();
   }, [user?._id]);
@@ -371,7 +383,7 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default Callbar
+export default Callbar;
