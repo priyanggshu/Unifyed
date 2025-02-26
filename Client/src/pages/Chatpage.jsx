@@ -1,13 +1,28 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
 import Callbar from "../components/Callbar";
 import { ChatContext } from "../context/Chat_Context";
+import { AuthContext } from "../context/Auth_Context";
 
 const ChatPage = () => {
   const { selectedChat } = useContext(ChatContext);
+  const { user } = useContext(AuthContext);
   const [isVideoCallActive, setIsVideoCallActive] = useState(false);
-  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const [userToCall, setUserToCall] = useState(null);
+
+  // Ensure we have the current user
+  useEffect(() => {
+    if (!user && localStorage.getItem("user")) {
+      // If AuthContext doesn't have user but localStorage does, use that
+      console.log("Using user from localStorage");
+    }
+  }, [user]);
+
+  const startVideoCall = (participant) => {
+    setUserToCall(participant);
+    setIsVideoCallActive(true);
+  };
 
   return (
     <div className="flex p-4 h-screen relative">
@@ -19,7 +34,7 @@ const ChatPage = () => {
       {/* Chat Window */}
       <div className="w-[50%] h-auto z-20 rounded-2xl border border-gray-300 overflow-hidden">
         {selectedChat ? (
-          <ChatWindow startVideoCall={() => setIsVideoCallActive(true)} />
+          <ChatWindow startVideoCall={startVideoCall} />
         ) : (
           <div className="flex items-center justify-center h-full text-gray-500 text-xl">
             Select a chat to start messaging
@@ -32,7 +47,8 @@ const ChatPage = () => {
         <Callbar
           isVideoCallActive={isVideoCallActive}
           setIsVideoCallActive={setIsVideoCallActive}
-          currentUser={currentUser}
+          currentUser={user}
+          userToCallId={userToCall?._id}
         />
       </div>
     </div>

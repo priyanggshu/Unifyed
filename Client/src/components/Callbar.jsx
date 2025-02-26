@@ -40,50 +40,51 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
 
   // Initialize PeerJS
   useEffect(() => {
-    if (!user?._id) return
-
-    const newPeer = new Peer()
-    setPeer(newPeer)
+    if (!user?._id) return;
+    const newPeer = new Peer({
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "turn:your-turn-server.com", username: "user", credential: "pass" }
+        ]
+      }
+    });
+    setPeer(newPeer);
 
     newPeer.on("open", (id) => {
-      setPeerId(id)
-      socket.emit("registerUser", { userId: user._id, peerId: id })
-      console.log(`✅ Registered with PeerJS: ${id}`)
-    })
+      setPeerId(id);
+      socket.emit("registerUser", { userId: user._id, peerId: id });
+    });
 
     newPeer.on("call", (call) => {
-      setIncomingCall(true)
-      setIncomingCallerId(call.peer)
+      setIncomingCall(true);
+      setIncomingCallerId(call.peer);
+      window.incomingCall = call;
+    });
 
-      // Store the call object to answer later
-      window.incomingCall = call
-    })
-
-    return () => {
-      newPeer.destroy()
-    }
-  }, [user?._id])
+    return () => newPeer.destroy();
+  }, [user?._id]);
 
   // Socket event listeners
   useEffect(() => {
     if (!user?._id) return
 
-    socket.on("incomingCall", ({ signal, from, peerId: callerPeerId }) => {
-      console.log("📞 Incoming call from:", from, "PeerID:", callerPeerId)
+    socket.on("incomingCall", ({ from, peerId }) => {
+      console.log("📞 Incoming call from:", from, "PeerID:", peerId)
       setIncomingCall(true)
       setIncomingCallerId(from)
 
       // Store the caller's peerId for answering
-      window.callerPeerId = callerPeerId
+      window.callerPeerId = peerId
     })
 
-    socket.on("callAccepted", (signal) => {
+    socket.on("callAccepted", ({ peerId }) => {
       console.log("✅ Call accepted by remote user")
       setCallAccepted(true)
 
       // If we have a stored outgoing call and stream, connect with the remote peer
       if (window.outgoingCall && stream) {
-        const call = peer.call(window.outgoingCall.peerId, stream)
+        const call = peer.call(peerId, stream)
         call.on("stream", (remoteStream) => {
           console.log("✅ Remote stream received after call accepted")
           setRemoteStream(remoteStream)
@@ -140,10 +141,10 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
   }, [remoteStream])
 
   const startVideoCall = async () => {
-    if (!otherParticipant || !peer) {
-      console.error("Cannot start call: Missing participant or peer connection")
-      return
-    }
+    if (!selectedChat) return;
+
+    const otherParticipant = selectedChat.participants.find((p) => p._id !== user._id);
+    if (!otherParticipant) return;
 
     try {
       console.log("Requesting camera & mic access...")
@@ -163,15 +164,14 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
       // Store outgoing call information
       window.outgoingCall = {
         userId: otherParticipant._id,
-        peerId: peerId,
+        peerId
       }
 
       // Send call request through socket
       socket.emit("callUser", {
         userToCall: otherParticipant._id,
-        signalData: { type: "offer" },
         from: user._id,
-        peerId: peerId, // Send our peerId so the remote user can call us back
+        peerId // Send our peerId so the remote user can call us back
       })
 
       setIsVideoCallActive(true)
@@ -200,8 +200,7 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
       // Notify the caller that we've accepted
       socket.emit("answerCall", {
         to: incomingCallerId,
-        signal: { type: "answer" },
-        peerId: peerId, // Send our peerId so the caller can establish connection
+        peerId // Send our peerId so the caller can establish connection
       })
 
       // If we have the caller's peerId, establish connection
@@ -376,4 +375,3 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
 }
 
 export default Callbar
-
