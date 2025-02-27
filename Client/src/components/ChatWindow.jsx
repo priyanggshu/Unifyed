@@ -4,16 +4,24 @@ import { IoMdCall, IoIosSend } from "react-icons/io";
 import { MdOutlineEmojiEmotions, MdKeyboardVoice } from "react-icons/md";
 import { AuthContext } from "../context/Auth_Context";
 import { ChatContext } from "../context/Chat_Context";
+import EmojiPicker from "emoji-picker-react";
 
 const ChatWindow = ({ startVideoCall }) => {
-  const { selectedChat, messages, sendMessageHandler } = useContext(ChatContext);
+  const { selectedChat, messages, sendMessageHandler } =
+    useContext(ChatContext);
   const { user } = useContext(AuthContext);
   const [newMessage, setNewMessage] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const messagesEndRef = useRef(null);
 
   // Auto-scroll to the latest message
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
   }, [messages]);
 
   // Send a new message
@@ -25,10 +33,15 @@ const ChatWindow = ({ startVideoCall }) => {
 
   // Handle Enter key press
   const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
+  };
+
+  const handleEmojiClick = (emojiObject) => {
+    setNewMessage((prev) => prev + emojiObject.emoji);
+    setShowEmojiPicker(false);
   };
 
   // Check if a chat is selected
@@ -47,16 +60,16 @@ const ChatWindow = ({ startVideoCall }) => {
   return (
     <div className="flex flex-col h-screen bg-transparent py-4 shadow-lg">
       {/* Chat Header */}
-      <div className="px-4 pt-2 pb-0 bg-[#EFEEF4] shadow-2xl flex justify-between items-center rounded-t-2xl text-gray-900 h-[6.5rem]">
+      <div className="px-4 pt-4 pb-0 bg-[#EFEEF4] shadow-xl flex justify-between items-center rounded-t-2xl text-gray-900 h-[5rem]">
         {/* Left Side - User Info */}
         <div className="flex items-center gap-3 h-full">
           <img
             src={otherParticipant?.avatar || "https://via.placeholder.com/40"}
             alt="User Avatar"
-            className="w-14 h-14 rounded-full border border-yellow-200"
+            className="w-13 h-13 rounded-full border border-yellow-200"
           />
           <div className="flex flex-col justify-center">
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-base font-semibold">
               {otherParticipant?.username || "Unknown User"}
             </h2>
             <p className="text-sm text-gray-500">
@@ -67,14 +80,14 @@ const ChatWindow = ({ startVideoCall }) => {
 
         {/* Right Side - Call Buttons */}
         <div className="flex space-x-3 gap-2">
-          <button 
-            onClick={() => startVideoCall(otherParticipant)} 
+          <button
+            onClick={() => startVideoCall(otherParticipant)}
             className="px-4 py-0 bg-zinc-300 scale-85 rounded-xl transition hover:text-blue-600"
             title="Start video call"
           >
-            <FaVideo className="scale-125 hover:scale-150"/>
+            <FaVideo className="scale-125 hover:scale-150" />
           </button>
-          <button 
+          <button
             className="p-4 bg-zinc-300 scale-85 rounded-xl transition hover:text-green-600"
             title="Start voice call"
           >
@@ -84,38 +97,62 @@ const ChatWindow = ({ startVideoCall }) => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-grow p-4 h-64 overflow-auto scrollbar scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200 custom-scrollbar">
+      <div className="flex-grow p-4 overflow-y-auto h-[calc(100vh-12rem)] custom-scrollbar bg-[#f7f7f7]">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-gray-500">
             No messages yet. Start the conversation!
           </div>
         ) : (
-          messages.map((msg) => (
-            <div
-              key={msg._id}
-              className={`flex ${msg.sender === user._id ? "justify-end" : "justify-start"} mb-3`}
-            >
+          messages.map((msg) => {
+            const isSent = msg.sender === user._id;
+
+            return (
               <div
-                className={`max-w-xs p-3 rounded-lg shadow-md ${
-                  msg.sender === user._id ? "bg-blue-500 text-white" : "bg-white text-gray-700"
-                }`}
+                key={msg._id}
+                className={`flex items-end ${
+                  isSent ? "justify-end" : "justify-start"
+                } mb-4 px-2`}
               >
-                {selectedChat.isGroupChat && msg.sender !== user._id && (
-                  <p className="text-sm font-bold">{msg.senderName}</p>
+                {!isSent && (
+                  <img
+                  src={msg.senderAvatar && msg.senderAvatar.startsWith("http") ? msg.senderAvatar : "https://via.placeholder.com/40"}
+                  alt="Sender Avatar"
+                  className="w-8 h-8 rounded-full mr-2 object-cover bg-gray-300"
+                />
+                
                 )}
-                <p>{msg.content}</p>
-                <span className="text-xs text-gray-400 block text-right">
-                  {new Date(msg.timestamp).toLocaleTimeString()}
-                </span>
+
+                <div
+                  className={`relative px-4 py-2 rounded-lg shadow-md max-w-[75%] ${
+                    isSent
+                      ? "bg-blue-500 text-white rounded-br-xl"
+                      : "bg-gray-200 text-gray-900 rounded-bl-xl"
+                  }`}
+                >
+                  {selectedChat.isGroupChat && !isSent && (
+                    <p className="text-xs font-semibold text-gray-600 mb-1">
+                      {msg.senderName}
+                    </p>
+                  )}
+                  <p className="text-sm">{msg.content}</p>
+                  <span className="text-[10px] text-gray-400 absolute bottom-1 right-2">
+                    {msg.timestamp && !isNaN(new Date(msg.timestamp).getTime())
+                      ? new Date(msg.timestamp).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "⏳"}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input */}
-      <div className="p-4 bg-white flex items-center">
+      <div className="p-3 bg-white flex items-center border-t border-gray-300 shadow-md">
         <div className="flex w-full bg-gray-100 rounded-full px-4 py-2 items-center">
           <input
             type="text"
@@ -125,10 +162,24 @@ const ChatWindow = ({ startVideoCall }) => {
             onChange={(e) => setNewMessage(e.target.value)}
             onClick={handleKeyPress}
           />
-          <MdOutlineEmojiEmotions className="text-gray-800 text-2xl mx-2 cursor-pointer" />
-          <MdKeyboardVoice className="text-gray-800 text-2xl mx-2 cursor-pointer" />
-          <button 
-            className="p-2 rounded-full bg-[#BBE8E3] text-[#03A184] ml-2 hover:bg-[#03A184] hover:text-white transition-colors" 
+
+          {/* Emoji Picker Toggle */}
+          <div className="relative">
+            <MdOutlineEmojiEmotions
+              className="text-gray-800 text-2xl mx-2 cursor-pointer"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            />
+            {showEmojiPicker && (
+              <div className="absolute bottom-12 right-0 bg-white shadow-lg rounded-lg">
+                <EmojiPicker
+                  onEmojiClick={(emojiObject) => handleEmojiClick(emojiObject)}
+                />
+              </div>
+            )}
+          </div>
+
+          <button
+            className="p-2 rounded-full bg-[#BBE8E3] text-[#03A184] ml-2 hover:bg-[#03A184] hover:text-white transition-colors"
             onClick={sendMessage}
           >
             <IoIosSend className="text-xl" />

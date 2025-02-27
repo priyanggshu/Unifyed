@@ -283,8 +283,8 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
   }
 
   return (
-    <div className="flex flex-col h-full w-full px-4 py-2 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-semibold text-gray-700 text-center mb-4">📞 Call</h2>
+    <div className="flex flex-col h-full w-full px-2 py-2 rounded-lg shadow-lg">
+      <h2 className="text-2xl font-semibold text-gray-700 text-center mb-4">Call</h2>
 
       <div className="flex justify-center">
         <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="p-2 border border-gray-300 rounded-lg">
@@ -293,11 +293,11 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
       </div>
 
       {isDropdownOpen && (
-        <div className="mt-2 bg-gray-100 p-3 rounded-lg shadow-md">
+        <div className="mt-2 bg-gray-200 p-1 rounded-xl shadow-lg">
           <select
             onChange={(e) => setSelectedCamera(e.target.value)}
             value={selectedCamera}
-            className="w-full p-2 border rounded-md mb-2"
+            className="w-full p-2 border-l-2 rounded-xl mb-2"
           >
             <option value="">Default Camera</option>
             {availableCameras.map((device) => (
@@ -310,7 +310,7 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
           <select
             onChange={(e) => setSelectedMicrophone(e.target.value)}
             value={selectedMicrophone}
-            className="w-full p-2 border rounded-md"
+            className="w-full p-2 border-r-2 rounded-xl"
           >
             <option value="">Default Microphone</option>
             {availableMicrophones.map((device) => (
@@ -323,8 +323,11 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
       )}
 
       {incomingCall && !callAccepted && (
-        <div className="text-center my-4 p-4 bg-blue-100 rounded-lg">
-          <p className="mb-2">📞 Incoming Call...</p>
+        <div className="text-center h-60 gap-12 flex flex-col items-center justify-center my-4 p-3 bg-blue-100 rounded-lg">
+          <div className="">
+            <p className="mb-2 py-4">📞 Incoming Call..</p>
+            <p className="font-bold text-xl">{user.username}</p>
+          </div>
           <div className="flex justify-center space-x-2">
             <button onClick={answerCall} className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
               Answer
@@ -338,9 +341,9 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
 
       {isVideoCallActive ? (
         <>
-          <div className="flex-1 flex items-center justify-center bg-gray-300 rounded-lg overflow-hidden">
+          <div className="flex-1 flex items-center justify-center border border-gray-400 rounded-2xl overflow-hidden mt-3 p-1 bg-blue-100 ">
             {remoteStream ? (
-              <video ref={userVideo} autoPlay playsInline className="w-full h-full object-cover" />
+              <video ref={userVideo} autoPlay playsInline className="w-full h-full rounded-xl  object-cover" />
             ) : (
               <div className="flex flex-col items-center justify-center">
                 <div className="animate-pulse w-16 h-16 bg-gray-400 rounded-full mb-2"></div>
@@ -349,26 +352,26 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
             )}
           </div>
 
-          <div className="flex-1 flex flex-col items-center bg-gray-200 rounded-lg overflow-hidden mt-4 p-4">
+          <div className="flex-1 flex flex-col border border-gray-400 items-center rounded-2xl overflow-hidden mt-3 p-1 bg-gray-300">
             {stream ? (
-              <video ref={myVideo} autoPlay playsInline muted className="w-full h-full object-cover" />
+              <video ref={myVideo} autoPlay playsInline muted className="w-full h-full rounded-xl object-cover" />
             ) : (
               <p>Your preview will appear here</p>
             )}
 
-            <div className="mt-8 flex justify-center space-x-4">
-              <button onClick={toggleMute} className={`p-3 rounded-full ${isMuted ? "bg-red-200" : "bg-gray-200"}`}>
+            <div className="mt-2 flex justify-center space-x-5">
+              <button onClick={toggleMute} className={`p-3 border-l border-gray-500 hover-bg-red-100 rounded-2xl`}>
                 {isMuted ? (
-                  <FaMicrophoneAltSlash className="text-red-600" />
+                  <FaMicrophoneAltSlash className="scale-125 hover:scale-150 cursor-grab" />
                 ) : (
-                  <FaMicrophoneAlt className="text-gray-600" />
+                  <FaMicrophoneAlt className="scale-125 text-indigo-400 hover:scale-150 cursor-grab" />
                 )}
               </button>
-              <button onClick={toggleVideo} className={`p-3 rounded-full ${!isVideoOn ? "bg-red-200" : "bg-gray-200"}`}>
-                {!isVideoOn ? <LuCameraOff className="text-red-600" /> : <LuCamera className="text-gray-600" />}
+              <button onClick={toggleVideo} className={`p-3 border-y border-gray-400 rounded-xl`}>
+                {!isVideoOn ? <LuCameraOff className="scale-125 hover:scale-150 cursor-grab" /> : <LuCamera className="scale-125 text-indigo-400 hover:scale-150 cursor-grab" />}
               </button>
-              <button onClick={endCall} className="p-3 rounded-full bg-red-500 hover:bg-red-600">
-                <MdOutlineCallEnd className="text-white" />
+              <button onClick={endCall} className="p-3 border-r border-gray-500 rounded-2xl bg-red-500 hover:bg-red-600">
+                <MdOutlineCallEnd className="scale-125 hover:scale-150 cursor-grab" />
               </button>
             </div>
           </div>

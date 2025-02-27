@@ -5,6 +5,7 @@ import Callbar from "../components/Callbar";
 import { ChatContext } from "../context/Chat_Context";
 import { AuthContext } from "../context/Auth_Context";
 
+
 const ChatPage = () => {
   const { selectedChat } = useContext(ChatContext);
   const { user } = useContext(AuthContext);
@@ -27,12 +28,12 @@ const ChatPage = () => {
   return (
     <div className="flex p-4 h-screen relative">
       {/* Sidebar */}
-      <div className="w-[25%] rounded-l-2xl border-l border-gray-400 overflow-hidden">
+      <div className="w-[20%] rounded-l-2xl border-l border-gray-400 overflow-hidden">
         <Sidebar />
       </div>
 
       {/* Chat Window */}
-      <div className="w-[50%] h-auto z-20 rounded-2xl border border-gray-300 overflow-hidden">
+      <div className="w-[60%] h-auto z-20 rounded-2xl border border-gray-300 overflow-hidden">
         {selectedChat ? (
           <ChatWindow startVideoCall={startVideoCall} />
         ) : (
@@ -43,7 +44,7 @@ const ChatPage = () => {
       </div>
 
       {/* Call Bar */}
-      <div className="w-[25%] rounded-r-2xl border-r border-gray-400 overflow-hidden">
+      <div className="w-[20%] rounded-r-2xl border-r border-gray-400 overflow-hidden">
         <Callbar
           isVideoCallActive={isVideoCallActive}
           setIsVideoCallActive={setIsVideoCallActive}
