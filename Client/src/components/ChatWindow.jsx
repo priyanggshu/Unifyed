@@ -47,7 +47,7 @@ const ChatWindow = ({ startVideoCall }) => {
   return (
     <div className="flex flex-col h-screen bg-transparent py-4 shadow-lg">
       {/* Chat Header */}
-      <div className="px-4 pt-3 bg-[#EFEEF4] shadow-2xl flex justify-between items-center rounded-t-2xl text-gray-900 h-20">
+      <div className="px-4 pt-2 pb-0 bg-[#EFEEF4] shadow-2xl flex justify-between items-center rounded-t-2xl text-gray-900 h-[6.5rem]">
         {/* Left Side - User Info */}
         <div className="flex items-center gap-3 h-full">
           <img
@@ -69,13 +69,13 @@ const ChatWindow = ({ startVideoCall }) => {
         <div className="flex space-x-3 gap-2">
           <button 
             onClick={() => startVideoCall(otherParticipant)} 
-            className="p-2 transition hover:text-blue-600"
+            className="px-4 py-0 bg-zinc-300 scale-85 rounded-xl transition hover:text-blue-600"
             title="Start video call"
           >
             <FaVideo className="scale-125 hover:scale-150"/>
           </button>
           <button 
-            className="p-2 transition hover:text-green-600"
+            className="p-4 bg-zinc-300 scale-85 rounded-xl transition hover:text-green-600"
             title="Start voice call"
           >
             <IoMdCall className="scale-125 hover:scale-150" />
@@ -84,7 +84,7 @@ const ChatWindow = ({ startVideoCall }) => {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-grow p-4 bg-neutral-100 overflow-y-auto">
+      <div className="flex-grow p-4 h-64 overflow-auto scrollbar scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200 custom-scrollbar">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-gray-500">
             No messages yet. Start the conversation!
