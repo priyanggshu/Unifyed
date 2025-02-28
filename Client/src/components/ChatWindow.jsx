@@ -5,6 +5,7 @@ import { MdOutlineEmojiEmotions, MdKeyboardVoice } from "react-icons/md";
 import { AuthContext } from "../context/Auth_Context";
 import { ChatContext } from "../context/Chat_Context";
 import EmojiPicker from "emoji-picker-react";
+import Message from "./Message";
 
 const ChatWindow = ({ startVideoCall }) => {
   const { selectedChat, messages, sendMessageHandler } =
@@ -58,128 +59,87 @@ const ChatWindow = ({ startVideoCall }) => {
     selectedChat.participants?.find((p) => p._id !== user._id) || null;
 
   return (
-    <div className="flex flex-col h-screen bg-transparent py-4 shadow-lg">
+    <div className="flex flex-col h-screen bg-[#f7f7f7] shadow-2xl rounded-xl overflow-hidden">
       {/* Chat Header */}
-      <div className="px-4 pt-4 pb-0 bg-[#EFEEF4] shadow-xl flex justify-between items-center rounded-t-2xl text-gray-900 h-[5rem]">
+      <div className="px-4 py-5 bg-[#ddd4ec] shadow-md flex justify-between items-center text-gray-900 h-[4rem]">
         {/* Left Side - User Info */}
-        <div className="flex items-center gap-3 h-full">
+        <div className="flex items-center gap-4">
           <img
             src={otherParticipant?.avatar || "https://via.placeholder.com/40"}
             alt="User Avatar"
-            className="w-13 h-13 rounded-full border border-yellow-200"
+            className="w-12 h-12 rounded-full border border-yellow-200"
           />
-          <div className="flex flex-col justify-center">
-            <h2 className="text-base font-semibold">
+          <div className="flex flex-col">
+            <h2 className="text-lg font-semibold">
               {otherParticipant?.username || "Unknown User"}
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-600">
               {otherParticipant?.lastActive ? "Online" : "Offline"}
             </p>
           </div>
         </div>
 
         {/* Right Side - Call Buttons */}
-        <div className="flex space-x-3 gap-2">
+        <div className="flex space-x-4">
           <button
             onClick={() => startVideoCall(otherParticipant)}
-            className="px-4 py-0 bg-zinc-300 scale-85 rounded-xl transition hover:text-blue-600"
+            className="p-2 bg-white rounded-xl hover:scale-110 transition-all hover:text-blue-600 shadow-md"
             title="Start video call"
           >
-            <FaVideo className="scale-125 hover:scale-150" />
+            <FaVideo className="text-xl text-blue-950 hover:scale-110 hover:text-sky-500" />
           </button>
           <button
-            className="p-4 bg-zinc-300 scale-85 rounded-xl transition hover:text-green-600"
+            className="p-2 bg-white hover:scale-110 transition-all rounded-xl shadow-md"
             title="Start voice call"
           >
-            <IoMdCall className="scale-125 hover:scale-150" />
+            <IoMdCall className="text-xl text-blue-950 hover:scale-110 hover:text-green-500" />
           </button>
         </div>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-grow p-4 overflow-y-auto h-[calc(100vh-12rem)] custom-scrollbar bg-[#f7f7f7]">
+      <div className="flex-grow p-4 overflow-auto scrollbar scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200 custom-scrollbar bg-[#f7f7f7] custom-scrollbar">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-gray-500">
             No messages yet. Start the conversation!
           </div>
         ) : (
-          messages.map((msg) => {
-            const isSent = msg.sender === user._id;
-
-            return (
-              <div
-                key={msg._id}
-                className={`flex items-end ${
-                  isSent ? "justify-end" : "justify-start"
-                } mb-4 px-2`}
-              >
-                {!isSent && (
-                  <img
-                  src={msg.senderAvatar && msg.senderAvatar.startsWith("http") ? msg.senderAvatar : "https://via.placeholder.com/40"}
-                  alt="Sender Avatar"
-                  className="w-8 h-8 rounded-full mr-2 object-cover bg-gray-300"
-                />
-                
-                )}
-
-                <div
-                  className={`relative px-4 py-2 rounded-lg shadow-md max-w-[75%] ${
-                    isSent
-                      ? "bg-blue-500 text-white rounded-br-xl"
-                      : "bg-gray-200 text-gray-900 rounded-bl-xl"
-                  }`}
-                >
-                  {selectedChat.isGroupChat && !isSent && (
-                    <p className="text-xs font-semibold text-gray-600 mb-1">
-                      {msg.senderName}
-                    </p>
-                  )}
-                  <p className="text-sm">{msg.content}</p>
-                  <span className="text-[10px] text-gray-400 absolute bottom-1 right-2">
-                    {msg.timestamp && !isNaN(new Date(msg.timestamp).getTime())
-                      ? new Date(msg.timestamp).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
-                      : "⏳"}
-                  </span>
-                </div>
-              </div>
-            );
-          })
+          messages.map((msg, index) => (
+            <Message key={msg._id || index} message={msg} currentUser={user} />
+          ))
         )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input */}
-      <div className="p-3 bg-white flex items-center border-t border-gray-300 shadow-md">
-        <div className="flex w-full bg-gray-100 rounded-full px-4 py-2 items-center">
+      <div className="pb-10 px-2 flex items-center rounded-full bg-[#BBE8E3] shadow-2xl sticky bottom-0 w-full">
+        <div className="flex w-full bg-gray-100 rounded-full px-2 py-2 items-center shadow-sm">
+          {/* Text Input */}
           <input
             type="text"
-            className="flex-grow bg-transparent p-2 outline-none"
+            className="flex-grow bg-transparent p-2 outline-none text-gray-800 placeholder-gray-500"
             placeholder="Write your message..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            onClick={handleKeyPress}
+            onKeyDown={handleKeyPress}
           />
 
           {/* Emoji Picker Toggle */}
           <div className="relative">
             <MdOutlineEmojiEmotions
-              className="text-gray-800 text-2xl mx-2 cursor-pointer"
+              className="text-gray-600 text-2xl mx-3 cursor-pointer hover:text-yellow-500 transition"
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             />
             {showEmojiPicker && (
-              <div className="absolute bottom-12 right-0 bg-white shadow-lg rounded-lg">
-                <EmojiPicker
-                  onEmojiClick={(emojiObject) => handleEmojiClick(emojiObject)}
-                />
+              <div className="absolute bottom-12 right-0 bg-white shadow-xl rounded-xl p-2">
+                <EmojiPicker onEmojiClick={handleEmojiClick} />
               </div>
             )}
           </div>
 
+          {/* Send Button */}
           <button
-            className="p-2 rounded-full bg-[#BBE8E3] text-[#03A184] ml-2 hover:bg-[#03A184] hover:text-white transition-colors"
+            className="p-2 rounded-full bg-blue-500 text-white ml-2 hover:bg-blue-600 transition-all transform active:scale-95 shadow-md"
             onClick={sendMessage}
           >
             <IoIosSend className="text-xl" />

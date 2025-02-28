@@ -19,10 +19,16 @@ export const getMessagesForChat = async (req, res) => {
     }
 
     const messages = await Message.find({ chatId: req.params.chatId })
-      .populate("sender", "username email")
-      .sort({ createdAt: 1 });
+      .populate("sender", "username email avatar")
+      .sort({ createdAt: 1 })
+      .lean();
+
+    const formattedMessages = messages.map((msg) => ({
+      ...msg,
+      timestamp: msg.createdAt.toISOString(),
+    }))
       
-    res.status(200).json(messages);
+    res.status(200).json(formattedMessages);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch messages", error: error.message });
   }
@@ -51,8 +57,16 @@ export const sendMessage = async (req, res) => {
     chat.updatedAt = new Date();
     await chat.save();
 
-    const newMessage = await message.populate("sender", "username email");
-    res.status(201).json(newMessage);
+    const newMessage = await message.populate("sender", "username email avatar");
+
+    res.status(201).json({
+      _id: newMessage._id,
+      chatId: newMessage.chatId,
+      sender: newMessage.sender,
+      content: newMessage.content,
+      isEncrypted: newMessage.isEncrypted,
+      timestamp: newMessage.createdAt.toISOString(),
+    })
   } catch (error) {
     res.status(500).json({ message: "Failed to send message", error: error.message });
   }
