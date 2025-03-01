@@ -1,6 +1,5 @@
 // frontend/src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "./context/Theme_Context";
 import { AuthProvider } from "./context/Auth_Context";
 import { ChatProvider } from "./context/Chat_Context";
 import Login from "./pages/Login";
@@ -10,7 +9,6 @@ import AdminDashboard from "./pages/AdminDashboard";
 
 const App = () => {
   return (
-    <ThemeProvider>
     <AuthProvider>
       <ChatProvider>
         <Router>
@@ -23,7 +21,6 @@ const App = () => {
         </Router>
       </ChatProvider>
     </AuthProvider>
-    </ThemeProvider>
   );
 };
 

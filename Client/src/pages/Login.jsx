@@ -32,7 +32,7 @@ const Login = () => {
     <div className="flex flex-col md:flex-row h-screen w-full bg-gray-200">
       {/* Left Section */}
       <div className="w-full md:w-1/2 flex flex-col h-screen justify-center items-center bg-green-50 md:bg-gray-50 p-10 shadow-lg">
-      <h2 className="md:hidden text-4xl mt-6 scale-x-110 font-bold italic text-blue-950 shadow-xs absolute top-5">Unifyed</h2>
+      <h2 className="md:hidden text-4xl mt-6 mb-[-2rem] scale-x-110 font-bold italic text-blue-950 shadow-xs absolute top-5">Unifyed</h2>
       <div className="border bg-gray-50 border-blue-200 p-4 md:p-8 text-center rounded-2xl shadow-xl">
         <h2 className="text-4xl font-bold mb-3 text-gray-900">Welcome Back</h2>
         <p className="text-gray-700 mb-10 font-light text-center">Log in to continue your journey with Unifyed.</p>
@@ -66,7 +66,7 @@ const Login = () => {
           </button>
         </form>
       </div>
-      <div className="pt-8">
+      <div className="pt-10">
         <p className="md:hidden scale-105 text-center font-light mt-8 font-stretch-75% italic text-blue-950">
           Unifyed offers seamless communication with WebRTC-powered video/audio calls, 
           end-to-end encryption, and AI-enhanced messaging for a smarter experience.

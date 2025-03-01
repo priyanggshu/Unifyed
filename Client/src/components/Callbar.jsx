@@ -283,7 +283,7 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive, darkMode }) => {
   }
 
   return (
-    <div className={`flex flex-col h-full w-full px-2 py-2  rounded-lg shadow-lg ${darkMode ? "bg-[#090112] text-[#B985F9]" : "bg-white text-black"}`}>
+    <div className={`flex flex-col h-full w-full px-2 py-2  rounded-lg shadow-lg ${darkMode ? "bg-[#090112] text-[#B985F9]" : "bg-gray-100 text-black"}`}>
       <h2 className={`text-2xl font-bold ${darkMode ? "text[#B985F9]" : "text-gray-700"} text-center mb-4`}>Call</h2>
 
       <div className="flex justify-center">

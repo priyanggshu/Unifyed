@@ -61,7 +61,7 @@ const ChatWindow = ({ startVideoCall, darkMode }) => {
   return (
     <div className={`flex flex-col h-screen ${darkMode ? "bg-[#090112]" : "bg-[#f7f7f7]"} shadow-2xl rounded-xl overflow-hidden`}>
       {/* Chat Header */}
-      <div className={`px-4 py-5 ${darkMode ? "bg-[#36145b] text-white" : "bg-[#ddd4ec] text-gray-900"} shadow-md flex justify-between items-center h-[4rem]`}>
+      <div className={`px-4 py-5 ${darkMode ? "bg-[#421b6b] text-white" : "bg-[#ddd4ec] text-gray-900"} shadow-md flex justify-between items-center h-[4rem]`}>
         {/* Left Side - User Info */}
         <div className="flex items-center gap-4">
           <img
@@ -113,7 +113,7 @@ const ChatWindow = ({ startVideoCall, darkMode }) => {
 
       {/* Message Input */}
       <div className={`pb-10 px-2 flex items-center rounded-full ${darkMode ? "bg-[#427a73]" : "bg-[#BBE8E3]"} shadow-2xl sticky bottom-0 w-full`}>
-        <div className={`flex w-full ${darkMode ? "bg-[#36145b]" : "bg-gray-100"} rounded-full px-2 py-2 items-center shadow-sm`}>
+        <div className={`flex w-full ${darkMode ? "bg-[#4C257E]" : "bg-gray-100"} rounded-full px-2 py-2 items-center shadow-sm`}>
           {/* Text Input */}
           <input
             type="text"

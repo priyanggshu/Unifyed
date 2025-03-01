@@ -96,7 +96,7 @@ const Signup = () => {
             </button>
           </form>
         </div>
-        <div className="pt-8">
+        <div className="pt-6">
           <p className="md:hidden scale-105 text-center font-light mt-8 font-stretch-75% italic text-blue-950">
             Unifyed offers seamless communication with WebRTC-powered
             video/audio calls, end-to-end encryption, and AI-enhanced messaging
