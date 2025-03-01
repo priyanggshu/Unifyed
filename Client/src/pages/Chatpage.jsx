@@ -11,9 +11,10 @@ const ChatPage = () => {
   const { user } = useContext(AuthContext);
   const [isVideoCallActive, setIsVideoCallActive] = useState(false);
   const [userToCall, setUserToCall] = useState(null);
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("darkMode") === "true"
-  );
+  const [darkMode, setDarkMode] = useState
+  ( localStorage.getItem("darkMode") === "true" );
+
+  const [view, setView] = useState("sidebar"); // "sidebar", "chat", "call"
 
   // ensuring current user exists
   useEffect(() => {
@@ -30,19 +31,20 @@ const ChatPage = () => {
   const startVideoCall = (participant) => {
     setUserToCall(participant);
     setIsVideoCallActive(true);
+    setView("call");
   };
 
   return (
-    <div className={`flex p-4 h-screen relative ${darkMode ? "bg-zinc-900 text-white" : "bg-white text-black"}`}>
+    <div className={`flex md:p-3 h-screen relative ${darkMode ? "bg-zinc-900 text-white" : "bg-white text-black"}`}>
       {/* Sidebar */}
-      <div className="w-[20%] rounded-l-2xl border-l border-gray-400 overflow-hidden">
-        <Sidebar darkMode={darkMode} setDarkMode={setDarkMode}/>
+      <div className={`w-full md:w-[20%] md:block ${view === "sidebar" ? "block" : "hidden"}`}>
+        <Sidebar darkMode={darkMode} setDarkMode={setDarkMode} setView={setView}/>
       </div>
 
       {/* Chat Window */}
-      <div className={`w-[60%] h-auto z-20 rounded-2xl border ${darkMode ? "border-[#776b88]" : "border-gray-300"}  overflow-hidden`}>
+      <div className={`w-full md:w-[60%] md:block ${view === "chat" ? "block" : "hidden"} sm:w-full`}>
         {selectedChat ? (
-          <ChatWindow startVideoCall={startVideoCall} darkMode={darkMode} />
+          <ChatWindow startVideoCall={startVideoCall} darkMode={darkMode} setView={setView}/>
         ) : (
           <div className={`flex items-center justify-center h-full ${darkMode ? "bg-[#090112] text-gray-200" : "bg-white text-gray-500"} text-xl`}>
             Select a chat to start messaging
@@ -51,13 +53,14 @@ const ChatPage = () => {
       </div>
 
       {/* Call Bar */}
-      <div className="w-[20%] rounded-r-2xl border-r border-gray-400 overflow-hidden">
+      <div className={`w-full md:w-[20%] md:block ${view === "call" ? "block" : "hidden"} sm:w-full`}>
         <Callbar
           isVideoCallActive={isVideoCallActive}
           setIsVideoCallActive={setIsVideoCallActive}
           currentUser={user}
           userToCallId={userToCall?._id}
           darkMode={darkMode}
+          setView={setView}
         />
       </div>
     </div>

@@ -7,9 +7,8 @@ import { ChatContext } from "../context/Chat_Context";
 import EmojiPicker from "emoji-picker-react";
 import Message from "./Message";
 
-const ChatWindow = ({ startVideoCall, darkMode }) => {
-  const { selectedChat, messages, sendMessageHandler } =
-    useContext(ChatContext);
+const ChatWindow = ({ startVideoCall, darkMode, setView }) => {
+  const { selectedChat, messages, sendMessageHandler } = useContext(ChatContext);
   const { user } = useContext(AuthContext);
   const [newMessage, setNewMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -59,11 +58,14 @@ const ChatWindow = ({ startVideoCall, darkMode }) => {
     selectedChat.participants?.find((p) => p._id !== user._id) || null;
 
   return (
-    <div className={`flex flex-col h-screen ${darkMode ? "bg-[#090112]" : "bg-[#f7f7f7]"} shadow-2xl rounded-xl overflow-hidden`}>
+    <div className={`flex flex-col h-full ${darkMode ? "bg-[#090112]" : "bg-[#f7f7f7]"} shadow-2xl md:rounded-xl overflow-hidden`}>
       {/* Chat Header */}
       <div className={`px-4 py-5 ${darkMode ? "bg-[#421b6b] text-white" : "bg-[#ddd4ec] text-gray-900"} shadow-md flex justify-between items-center h-[4rem]`}>
         {/* Left Side - User Info */}
         <div className="flex items-center gap-4">
+          <button onClick={() => setView("sidebar")} className={`md:hidden scale-125 py-2 ${darkMode ? "text-white" : "text-black"} `}>
+            ←
+          </button>
           <img
             src={otherParticipant?.avatar || "https://via.placeholder.com/40"}
             alt="User Avatar"
@@ -112,7 +114,7 @@ const ChatWindow = ({ startVideoCall, darkMode }) => {
       </div>
 
       {/* Message Input */}
-      <div className={`pb-10 px-2 flex items-center rounded-full ${darkMode ? "bg-[#427a73]" : "bg-[#BBE8E3]"} shadow-2xl sticky bottom-0 w-full`}>
+      <div className={`pb-4 px-2 flex items-center rounded-full ${darkMode ? "bg-[#427a73]" : "bg-[#BBE8E3]"} shadow-2xl sticky bottom-0 w-full`}>
         <div className={`flex w-full ${darkMode ? "bg-[#4C257E]" : "bg-gray-100"} rounded-full px-2 py-2 items-center shadow-sm`}>
           {/* Text Input */}
           <input
@@ -131,7 +133,9 @@ const ChatWindow = ({ startVideoCall, darkMode }) => {
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             />
             {showEmojiPicker && (
-              <div className="absolute bottom-12 right-0 bg-white shadow-xl rounded-xl">
+              <div className="absolute bottom-3 scale-90 md:bottom-5 right-[-2rem] md:right-0 shadow-xl rounded-2xl">
+                   
+
                 <EmojiPicker onEmojiClick={handleEmojiClick} theme={darkMode ? "dark" : "light"}/>
               </div>
             )}

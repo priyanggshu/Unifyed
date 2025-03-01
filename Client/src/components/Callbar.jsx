@@ -1,5 +1,3 @@
-"use client"
-
 import { useEffect, useRef, useState, useContext } from "react"
 import { io } from "socket.io-client"
 import Peer from "peerjs"
@@ -13,7 +11,7 @@ import { ChatContext } from "../context/Chat_Context"
 // Connect to the same port as the server
 const socket = io("http://localhost:3000")
 
-const Callbar = ({ isVideoCallActive, setIsVideoCallActive, darkMode }) => {
+const Callbar = ({ isVideoCallActive, setIsVideoCallActive, darkMode, setView }) => {
   const { user } = useContext(AuthContext)
   const { selectedChat } = useContext(ChatContext)
 
@@ -284,6 +282,9 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive, darkMode }) => {
 
   return (
     <div className={`flex flex-col h-full w-full px-2 py-2  rounded-lg shadow-lg ${darkMode ? "bg-[#090112] text-[#B985F9]" : "bg-gray-100 text-black"}`}>
+       <button onClick={() => setView("chat")} className="text-white">
+          ← Back
+        </button>
       <h2 className={`text-2xl font-bold ${darkMode ? "text[#B985F9]" : "text-gray-700"} text-center mb-4`}>Call</h2>
 
       <div className="flex justify-center">
@@ -294,6 +295,9 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive, darkMode }) => {
 
       {isDropdownOpen && (
         <div className={`mt-2 text-sm ${darkMode ? "bg-gray-700" : "bg-gray-200"} p-1 rounded-xl shadow-lg`}>
+          <button onClick={() => setView("chat")} className={`md:hidden ml-4 px-2 py-3 scale-125 ${darkMode ? "text-white" : "text-black"}`}>
+          ← Back
+        </button>
           <select
             onChange={(e) => setSelectedCamera(e.target.value)}
             value={selectedCamera}
@@ -378,6 +382,7 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive, darkMode }) => {
         </>
       ) : (
         <div className="flex-1 flex items-center justify-center">
+          
           <p className={`text-center ${darkMode ? "text-gray-300" : "text-gray-500"}`}>
             {otherParticipant
               ? "Start a video call by clicking the video icon in the chat header"

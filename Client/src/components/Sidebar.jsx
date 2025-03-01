@@ -2,16 +2,15 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllUsers } from "../services/authService";
 import { AuthContext } from "../context/Auth_Context";
-import { CiSearch } from "react-icons/ci";
-import { AiOutlineLogout, } from "react-icons/ai";
-import { BsMoon, BsSun } from "react-icons/bs";
 import { ChatContext } from "../context/Chat_Context";
+import { BsMoon, BsSun } from "react-icons/bs";
+import { AiOutlineLogout, } from "react-icons/ai";
 
-const Sidebar = ({ darkMode, setDarkMode }) => {
+const Sidebar = ({ darkMode, setDarkMode, setView }) => {
   const [users, setUsers] = useState([]);
   const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
   const { chats, selectChat } = useContext(ChatContext);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const fetchUsers = async () => {
@@ -34,35 +33,44 @@ const Sidebar = ({ darkMode, setDarkMode }) => {
     fetchUsers();
   }, []);
 
+  const handleSelectChat = (chat) => {
+    selectChat(chat);
+    setView("chat"); 
+  };
+  
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/");
   };
 
   return (
-    <div className={`h-screen shadow-lg flex flex-col ${darkMode ? "bg-[#090112] text-white" : "bg-gray-100 text-black"}`}>
+    <div className={`relative h-full flex flex-col ${darkMode ? "bg-[#090112] text-white" : "bg-gray-100 text-black"}`}>
       {/* Header */}
-      <div className={`p-4 pl-10 text-2xl shadow-sm shadow- font-bold ${darkMode ? "text-[#B985F9]" : "text-gray-900"}`}>Chat</div>
+      <div className={`p-6 md:p-4 pl-12 md:pl-10 text-3xl md:text-2xl shadow-md font-bold ${darkMode ? "text-[#B985F9]" : "text-gray-900"}`}>Chat</div>
+      <button onClick={() => setDarkMode(!darkMode) }
+          className={`block md:hidden absolute right-5 top-9 scale-125 md:scale-none pb-4 items-center md:gap-2 md:p-2 hover:cursor-grab hover:scale-110 rounded-full transition-all ${darkMode ? "hover:bg-gray-black border-gray-600" : "hover:bg-gray-200 border-gray-300"}`}
+        >
+          {darkMode ? <BsSun className="text-yellow-500 scale-125" /> : <BsMoon className="text-yellow-black" />}
+        </button>
       
       {/* User Info */}
-      <div className="p-4 flex flex-col items-center text-center">
-        <img src={user?.avatar} alt="User Avatar" className="w-28 h-28 rounded-full border-2 border-blue-200" />
+      <div className=" flex flex-col items-center text-center pt-5 md:pt-0">
+        <img src={user?.avatar} alt="User Avatar" className="w-32 h-32 md:w-28 md:h-28 md:mt-4 rounded-full border-2 border-blue-200" />
         
-        <h2 className={`mt-3 ${darkMode ? "text-[#EADBFE]" : "text-sky-950"} text-xl font-bold`}>{user?.username}</h2>
-        <p className={`text-xs mt-[2px] ${darkMode ? "text-fuchsia-50" : "text-gray-700"}`}>{user?.email}</p>
-        <span className="mt-3 bg-[#BBE8E3] text-[#03A184] text-xs px-3 py-2 rounded-full">Connected</span>
+        <h2 className={`mt-1 md:mt-3 ${darkMode ? "text-[#EADBFE]" : "text-sky-950"} text-2xl md:text-xl font-bold`}>{user?.username}</h2>
+        <p className={`text-sm md:text-xs my-1 md:mt-[2px] ${darkMode ? "text-fuchsia-50" : "text-gray-700"}`}>{user?.email}</p>
+        <span className="my-2 scale-110 md:scale-none md:mt-3 bg-[#BBE8E3] text-[#03A184] text-xs px-3 py-2 rounded-full">Connected</span>
 
         {/* Dark Mode Toggle */}
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className={`mt-3 flex items-center gap-2 p-2 hover:cursor-grab hover:scale-110 rounded-full transition-all ${darkMode ? "hover:bg-gray-black border-gray-600" : "hover:bg-gray-200 border-gray-300"}`}
+        <button onClick={() => setDarkMode(!darkMode) }
+          className={`hidden md:block scale-125 md:scale-none pb-4 items-center md:gap-2 md:p-2 hover:cursor-grab hover:scale-110 rounded-full transition-all ${darkMode ? "hover:bg-gray-black border-gray-600" : "hover:bg-gray-200 border-gray-300"}`}
         >
           {darkMode ? <BsSun className="text-yellow-500 scale-125" /> : <BsMoon className="text-yellow-black" />}
         </button>
       </div>
       
       {/* Search Bar */}
-      <div className={`px-4 pb-4 border-b ${darkMode ? "border-none" : "border-gray-100"}  border-gray-100`}>
+      <div className={`px-5 md:px-4 pb-4 border-b ${darkMode ? "border-none" : "border-gray-100"}  border-gray-100`}>
         <input
           type="text"
           placeholder="Search..."
@@ -72,12 +80,12 @@ const Sidebar = ({ darkMode, setDarkMode }) => {
       
       {/* Users List */}
       <div className="flex-grow pr-3 mx-1 rounded-xl overflow-y-auto p-2">
-        <p className={`text-sm font-semibold pl-1 pb-3 ${darkMode ? "text-gray-200" : "text-gray-500"}`}>Latest Chats</p>
+        <p className={`md:text-sm font-semibold pl-1 pb-3 ${darkMode ? "text-gray-200" : "text-gray-500"}`}>Latest Chats</p>
         {users.map((otherUser) => (
           <div
             key={otherUser._id}
             className={`flex items-center py-3 border ${darkMode ? "border-[#38353b] rounded-2xl" : "border-green-100 rounded-xl"}  hover:${darkMode ? "bg-gray-400" : "bg-gray-200"} cursor-pointer`}
-            onClick={() => selectChat(otherUser)}
+            onClick={() => handleSelectChat(otherUser)}
           >
             <img src={otherUser.avatar || "https://via.placeholder.com/40"} alt="User Avatar" className="w-13 h-13 m-1 rounded-full mr-3 border border-yellow-200" />
             <div>
