@@ -13,7 +13,7 @@ import { ChatContext } from "../context/Chat_Context"
 // Connect to the same port as the server
 const socket = io("http://localhost:3000")
 
-const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
+const Callbar = ({ isVideoCallActive, setIsVideoCallActive, darkMode }) => {
   const { user } = useContext(AuthContext)
   const { selectedChat } = useContext(ChatContext)
 
@@ -283,21 +283,21 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
   }
 
   return (
-    <div className="flex flex-col h-full w-full px-2 py-2 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-semibold text-gray-700 text-center mb-4">Call</h2>
+    <div className={`flex flex-col h-full w-full px-2 py-2  rounded-lg shadow-lg ${darkMode ? "bg-[#090112] text-[#B985F9]" : "bg-white text-black"}`}>
+      <h2 className={`text-2xl font-bold ${darkMode ? "text[#B985F9]" : "text-gray-700"} text-center mb-4`}>Call</h2>
 
       <div className="flex justify-center">
-        <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="p-2 border border-gray-300 rounded-lg">
+        <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className={`p-2 border ${darkMode ? "border-gray-600" : "border-gray-300"} rounded-lg`}>
           <IoSettingsOutline className="text-xl" />
         </button>
       </div>
 
       {isDropdownOpen && (
-        <div className="mt-2 bg-gray-200 p-1 rounded-xl shadow-lg">
+        <div className={`mt-2 text-sm ${darkMode ? "bg-gray-700" : "bg-gray-200"} p-1 rounded-xl shadow-lg`}>
           <select
             onChange={(e) => setSelectedCamera(e.target.value)}
             value={selectedCamera}
-            className="w-full p-2 border-l-2 rounded-xl mb-2"
+            className={`w-full p-2 border-l-2 rounded-xl mb-2 ${darkMode ? "bg-gray-800 text-white border-gray-600" : "bg-white text-black border-gray-300"}`}
           >
             <option value="">Default Camera</option>
             {availableCameras.map((device) => (
@@ -310,7 +310,7 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
           <select
             onChange={(e) => setSelectedMicrophone(e.target.value)}
             value={selectedMicrophone}
-            className="w-full p-2 border-r-2 rounded-xl"
+            className={`w-full p-2 border-r-2 rounded-xl ${darkMode ? "bg-gray-800 text-white border-gray-600" : "bg-white text-black border-gray-300"}`}
           >
             <option value="">Default Microphone</option>
             {availableMicrophones.map((device) => (
@@ -323,7 +323,7 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
       )}
 
       {incomingCall && !callAccepted && (
-        <div className="text-center h-60 gap-12 flex flex-col items-center justify-center my-4 p-3 bg-blue-100 rounded-lg">
+        <div className={`text-center h-60 gap-12 flex flex-col items-center justify-center my-4 p-3 ${darkMode ? "bg-blue-900" : "bg-blue-100"} rounded-lg`}>
           <div className="">
             <p className="mb-2 py-4">📞 Incoming Call..</p>
             <p className="font-bold text-xl">{user.username}</p>
@@ -341,18 +341,18 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
 
       {isVideoCallActive ? (
         <>
-          <div className="flex-1 flex items-center justify-center border border-gray-400 rounded-2xl overflow-hidden mt-3 p-1 bg-blue-100 ">
+          <div className={`flex-1 flex items-center justify-center border ${darkMode ? "border-gray-600 bg-[#3B205A]" : "border-gray-400 bg-blue-100"} rounded-2xl overflow-hidden mt-3 p-1`}>
             {remoteStream ? (
-              <video ref={userVideo} autoPlay playsInline className="w-full h-full rounded-xl  object-cover" />
+              <video ref={userVideo} autoPlay playsInline className="w-full h-full rounded-xl object-cover" />
             ) : (
               <div className="flex flex-col items-center justify-center">
-                <div className="animate-pulse w-16 h-16 bg-gray-400 rounded-full mb-2"></div>
-                <p>Connecting to remote user...</p>
+                <div className="animate-pulse w-16 h-16 bg-gray-300 rounded-full mb-2"></div>
+                <p className="text-sm">Connecting to remote user...</p>
               </div>
             )}
           </div>
 
-          <div className="flex-1 flex flex-col border border-gray-400 items-center rounded-2xl overflow-hidden mt-3 p-1 bg-gray-300">
+          <div className={`flex-1 flex flex-col border ${darkMode ? "border-gray-600 bg-[#090112]" : "border-gray-400 bg-gray-300"} items-center rounded-2xl overflow-hidden mt-3 p-1`}>
             {stream ? (
               <video ref={myVideo} autoPlay playsInline muted className="w-full h-full rounded-xl object-cover" />
             ) : (
@@ -360,14 +360,14 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
             )}
 
             <div className="mt-2 flex justify-center space-x-5">
-              <button onClick={toggleMute} className={`p-3 border-l border-gray-500 hover-bg-red-100 rounded-2xl`}>
+              <button onClick={toggleMute} className={`p-3 ${darkMode ? "border-gray-600" : "border-gray-500"} border-l rounded-2xl`}>
                 {isMuted ? (
                   <FaMicrophoneAltSlash className="scale-125 hover:scale-150 cursor-grab" />
                 ) : (
                   <FaMicrophoneAlt className="scale-125 text-indigo-400 hover:scale-150 cursor-grab" />
                 )}
               </button>
-              <button onClick={toggleVideo} className={`p-3 border-y border-gray-400 rounded-xl`}>
+              <button onClick={toggleVideo} className={`p-3 border-y ${darkMode ? "border-gray-600" : "border-gray-400"} rounded-xl`}>
                 {!isVideoOn ? <LuCameraOff className="scale-125 hover:scale-150 cursor-grab" /> : <LuCamera className="scale-125 text-indigo-400 hover:scale-150 cursor-grab" />}
               </button>
               <button onClick={endCall} className="p-3 border-r border-gray-500 rounded-2xl bg-red-500 hover:bg-red-600">
@@ -378,7 +378,7 @@ const Callbar = ({ isVideoCallActive, setIsVideoCallActive }) => {
         </>
       ) : (
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-center text-gray-500">
+          <p className={`text-center ${darkMode ? "text-gray-300" : "text-gray-500"}`}>
             {otherParticipant
               ? "Start a video call by clicking the video icon in the chat header"
               : "Select a chat to start a video call"}

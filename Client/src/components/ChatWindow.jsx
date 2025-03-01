@@ -7,7 +7,7 @@ import { ChatContext } from "../context/Chat_Context";
 import EmojiPicker from "emoji-picker-react";
 import Message from "./Message";
 
-const ChatWindow = ({ startVideoCall }) => {
+const ChatWindow = ({ startVideoCall, darkMode }) => {
   const { selectedChat, messages, sendMessageHandler } =
     useContext(ChatContext);
   const { user } = useContext(AuthContext);
@@ -48,7 +48,7 @@ const ChatWindow = ({ startVideoCall }) => {
   // Check if a chat is selected
   if (!selectedChat) {
     return (
-      <div className="flex flex-col h-screen items-center justify-center text-gray-600 text-lg">
+      <div className={`flex flex-col h-screen items-center justify-center ${darkMode ? "bg-[#090112] text-gray-300" : "bg-[#f7f7f7] text-gray-600"} text-md`}>
         Select a chat to start messaging
       </div>
     );
@@ -59,9 +59,9 @@ const ChatWindow = ({ startVideoCall }) => {
     selectedChat.participants?.find((p) => p._id !== user._id) || null;
 
   return (
-    <div className="flex flex-col h-screen bg-[#f7f7f7] shadow-2xl rounded-xl overflow-hidden">
+    <div className={`flex flex-col h-screen ${darkMode ? "bg-[#090112]" : "bg-[#f7f7f7]"} shadow-2xl rounded-xl overflow-hidden`}>
       {/* Chat Header */}
-      <div className="px-4 py-5 bg-[#ddd4ec] shadow-md flex justify-between items-center text-gray-900 h-[4rem]">
+      <div className={`px-4 py-5 ${darkMode ? "bg-[#36145b] text-white" : "bg-[#ddd4ec] text-gray-900"} shadow-md flex justify-between items-center h-[4rem]`}>
         {/* Left Side - User Info */}
         <div className="flex items-center gap-4">
           <img
@@ -73,7 +73,7 @@ const ChatWindow = ({ startVideoCall }) => {
             <h2 className="text-lg font-semibold">
               {otherParticipant?.username || "Unknown User"}
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className={`text-sm ${darkMode ? "text-gray-200" : "text-gray-600"} `}>
               {otherParticipant?.lastActive ? "Online" : "Offline"}
             </p>
           </div>
@@ -83,42 +83,42 @@ const ChatWindow = ({ startVideoCall }) => {
         <div className="flex space-x-4">
           <button
             onClick={() => startVideoCall(otherParticipant)}
-            className="p-2 bg-white rounded-xl hover:scale-110 transition-all hover:text-blue-600 shadow-md"
+            className={`p-2 ${darkMode ? "bg-[#B9B1C0]" : "bg-white hover:text-blue-600"} rounded-xl hover:scale-110 transition-all  shadow-md`}
             title="Start video call"
           >
-            <FaVideo className="text-xl text-blue-950 hover:scale-110 hover:text-sky-500" />
+            <FaVideo className={`text-xl ${darkMode ? "text-indigo-700 hover:text-emerald-700" : "text-blue-950 hover:text-sky-500"} hover:scale-110 `}/>
           </button>
           <button
-            className="p-2 bg-white hover:scale-110 transition-all rounded-xl shadow-md"
+            className={`p-2 ${darkMode ? "bg-[#B9B1C0]" : "bg-white"} hover:scale-110 transition-all rounded-xl shadow-md`}
             title="Start voice call"
           >
-            <IoMdCall className="text-xl text-blue-950 hover:scale-110 hover:text-green-500" />
+            <IoMdCall className={`text-xl ${darkMode ? "text-indigo-700 hover:text-emerald-600" : "text-blue-950 hover:text-green-500"} hover:scale-110 `}/>
           </button>
         </div>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-grow p-4 overflow-auto scrollbar scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200 custom-scrollbar bg-[#f7f7f7] custom-scrollbar">
+      <div className={`flex-grow p-4 overflow-auto scrollbar scrollbar-thin scrollbar-thumb-blue-500 ${darkMode ? "scrollbar-track-gray-700 bg-[#090112]" : "scrollbar-track-gray-200 bg-[#f7f7f7]"} custom-scrollbar`}>
         {messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-gray-500">
+          <div className={`flex items-center justify-center h-full ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
             No messages yet. Start the conversation!
           </div>
         ) : (
           messages.map((msg, index) => (
-            <Message key={msg._id || index} message={msg} currentUser={user} />
+            <Message darkMode={darkMode} key={msg._id || index} message={msg} currentUser={user} />
           ))
         )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input */}
-      <div className="pb-10 px-2 flex items-center rounded-full bg-[#BBE8E3] shadow-2xl sticky bottom-0 w-full">
-        <div className="flex w-full bg-gray-100 rounded-full px-2 py-2 items-center shadow-sm">
+      <div className={`pb-10 px-2 flex items-center rounded-full ${darkMode ? "bg-[#427a73]" : "bg-[#BBE8E3]"} shadow-2xl sticky bottom-0 w-full`}>
+        <div className={`flex w-full ${darkMode ? "bg-[#36145b]" : "bg-gray-100"} rounded-full px-2 py-2 items-center shadow-sm`}>
           {/* Text Input */}
           <input
             type="text"
-            className="flex-grow bg-transparent p-2 outline-none text-gray-800 placeholder-gray-500"
-            placeholder="Write your message..."
+            className={`flex-grow bg-transparent p-2 outline-none ${darkMode ? " text-white placeholder-gray-200" : "text-gray-800 placeholder-gray-500"}`}
+            placeholder="Write your message.."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyPress}
@@ -127,12 +127,12 @@ const ChatWindow = ({ startVideoCall }) => {
           {/* Emoji Picker Toggle */}
           <div className="relative">
             <MdOutlineEmojiEmotions
-              className="text-gray-600 text-2xl mx-3 cursor-pointer hover:text-yellow-500 transition"
+              className={`${darkMode ? "text-gray-300" : "text-gray-600"} text-2xl mx-3 cursor-pointer hover:text-yellow-500 transition`}
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             />
             {showEmojiPicker && (
-              <div className="absolute bottom-12 right-0 bg-white shadow-xl rounded-xl p-2">
-                <EmojiPicker onEmojiClick={handleEmojiClick} />
+              <div className="absolute bottom-12 right-0 bg-white shadow-xl rounded-xl">
+                <EmojiPicker onEmojiClick={handleEmojiClick} theme={darkMode ? "dark" : "light"}/>
               </div>
             )}
           </div>

@@ -1,4 +1,4 @@
-const Message = ({ message, currentUser }) => {
+const Message = ({ message, currentUser, darkMode }) => {
   const isSender = message.sender._id === currentUser._id;
 
   return (
@@ -16,12 +16,14 @@ const Message = ({ message, currentUser }) => {
       <div
         className={`relative px-4 pb-6 max-w-[75%] text-sm shadow-md rounded-2xl ${
           isSender
-            ? "bg-[#a4e9dd] rounded-br-xl"
+            ? darkMode
+              ? "bg-[#73c1b4] rounded-br-xl"
+              : "bg-[#a4e9dd] text-white rounded-br-xl"
             : "bg-gray-200 text-gray-900 rounded-bl-xl"
         }`}
       >
         {/* Show sender name for group chats */}
-        <p className="text-sm font-semibold italic mr-10 my-1">
+        <p className="text-sm text-black font-semibold italic mr-10 my-1">
           {!isSender ? message.sender.username : "You"}
         </p>
 
