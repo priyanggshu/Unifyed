@@ -1,19 +1,17 @@
-// frontend/src/App.jsx
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { AuthContext, AuthProvider } from "./context/Auth_Context";
+import { AuthProvider, AuthContext } from "./context/Auth_Context";
 import { ChatProvider } from "./context/Chat_Context";
 import { useContext, useEffect } from "react";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ChatPage from "./pages/ChatPage";
 import AdminDashboard from "./pages/AdminDashboard";
-import LogRocket from 'logrocket';
+import LogRocket from "logrocket";
 import posthog from "posthog-js";
 
+LogRocket.init("tzrop0/unifyed");
 
-LogRocket.init('tzrop0/unifyed');
-
-const App = () => {
+const AppContent = () => {
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
@@ -22,11 +20,7 @@ const App = () => {
         name: user.username,
         email: user.email,
       });
-    }
-  }, [user]); 
 
-  useEffect(() => {
-    if (user) {
       posthog.identify(user._id, {
         name: user.username,
         email: user.email,
@@ -37,16 +31,22 @@ const App = () => {
   }, [user]);
 
   return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Routes>
+    </Router>
+  );
+};
+
+const App = () => {
+  return (
     <AuthProvider>
       <ChatProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-          </Routes>
-        </Router>
+        <AppContent />
       </ChatProvider>
     </AuthProvider>
   );
