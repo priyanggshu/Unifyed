@@ -9,7 +9,7 @@ import { AuthContext } from "../context/Auth_Context"
 import { ChatContext } from "../context/Chat_Context"
 
 // Connect to the same port as the server
-const socket = io("http://localhost:3000")
+const socket = io(import.meta.env.VITE_BACKEND_URL)
 
 const Callbar = ({ isVideoCallActive, setIsVideoCallActive, darkMode, setView }) => {
   const { user } = useContext(AuthContext)

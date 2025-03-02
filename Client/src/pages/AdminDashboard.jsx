@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [stats, setStats] = useState({});
@@ -8,8 +10,8 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data: userData } = await axios.get("/api/admin/users");
-        const { data: statsData } = await axios.get("/api/admin/stats");
+        const { data: userData } = await axios.get(`${API_BASE_URL}/api/admin/users`);
+        const { data: statsData } = await axios.get(`${API_BASE_URL}/api/admin/stats`);
         setUsers(userData);
         setStats(statsData);
       } catch (error) {
@@ -22,7 +24,7 @@ const AdminDashboard = () => {
   const handleDeleteUser = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      await axios.delete(`/api/admin/users/${id}`);
+      await axios.delete(`${API_BASE_URL}/api/admin/users/${id}`);
       setUsers(users.filter((user) => user._id !== id));
     } catch (error) {
       console.error("Error deleting user", error);
