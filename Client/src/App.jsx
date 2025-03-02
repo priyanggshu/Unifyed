@@ -4,7 +4,7 @@ import { ChatProvider } from "./context/Chat_Context";
 import { useContext, useEffect } from "react";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import ChatPage from "./pages/ChatPage";
+import ChatPage from "./pages/Chatpage";
 import AdminDashboard from "./pages/AdminDashboard";
 import LogRocket from "logrocket";
 import posthog from "posthog-js";
