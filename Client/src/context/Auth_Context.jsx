@@ -14,7 +14,7 @@ export const AuthProvider = ({ children }) => {
         try {
           const profile = await getUserProfile(user.token);
           setUser({...profile, token: user.token}); // Update user state with profile details
-          localStorage.setItem("user", JSON.stringify(profile));
+          localStorage.setItem("user", JSON.stringify({...profile, token: user.token}));
         } catch (error) {
           console.error("Error fetching user profile:", error);
           logout();
@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
       }
     };
     fetchUser();
-  }, []);
+  }, [user?.token]);
 
   const login = (userData) => {
     if(!userData || !userData.token) {

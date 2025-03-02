@@ -1,11 +1,8 @@
 
 export const getUserFromLocalStorage = () => {
   try {
-    const user = localStorage.getItem("user");
-    if(!user) return null;
-
-    console.log((`user: ${user}`))
-    return JSON.parse(user);
+    const user = JSON.parse(localStorage.getItem("user"));
+    return user && user.token ? user : null;
   } catch (error) {
     console.error("Error parsing user from localStorage:", error);
     localStorage.removeItem("user");

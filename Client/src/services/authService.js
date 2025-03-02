@@ -6,12 +6,19 @@ export const signupUser = async (userData) => {
 };
 
 export const loginUser = async (userData) => {
-  const response = await api.post("/auth/login", userData);
-  console.log("Login Response:", response.data);
-  if(!response.data.token) {
-    throw new Error("Token missing in API response");
+  try {
+    const response = await api.post("/auth/login", userData);
+    console.log("Login Response:", response.data);
+    
+    if(!response.data.token) {
+      throw new Error("Token missing in API response");
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Login error:", error.response?.data || error.message);
+    throw error;
   }
-  return response.data;
 };
 
 export const getAllUsers = async (token) => {
@@ -21,16 +28,13 @@ export const getAllUsers = async (token) => {
     const response = await api.get("/users", {
       headers: { Authorization: `Bearer ${token}`}
     });
-    console.log("✅ API Response:", response.data); // Debugging
 
-    if (!response.data) {
-      throw new Error("No data received from API");
-    }
+    console.log("✅ API Response:", response.data);
 
-    return response.data;
+    return response.data || [];
   } catch (error) {
-    console.error("❌ Error fetching users:", error.response?.data || error.message);
-    return []; // Return an empty array instead of undefined to prevent crashes
+    console.error("Error fetching users:", error.response?.data || error.message);
+    return [];
   }
 }
 
